@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yihuhou.github.io/sitemap.xml
