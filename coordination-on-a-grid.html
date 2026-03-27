@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coordination on a Grid | Interactive Explainer</title>
+  <meta
+    name="description"
+    content="Interactive explainer for Coordination on a Grid: how coarse reporting creates posterior ties, expands multiplicity, and changes equilibrium selection."
+  >
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://yihuhou.github.io/coordination-on-a-grid.html">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yihuhou.github.io/coordination-on-a-grid.html">
+  <meta property="og:title" content="Coordination on a Grid | Interactive Explainer">
+  <meta
+    property="og:description"
+    content="A visual guide to the paper's main mechanism: coarse reports create exact ties, ties widen the equilibrium set, and resolution is distinct from accuracy."
+  >
+  <meta property="og:image" content="https://yihuhou.github.io/assets/yihu-photo.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+  <style>
+    :root {
+      --bg: #f6f0e5;
+      --surface: rgba(255, 251, 245, 0.86);
+      --surface-strong: #fffdf9;
+      --ink: #172126;
+      --muted: #5d6872;
+      --line: rgba(23, 33, 38, 0.12);
+      --line-strong: rgba(23, 33, 38, 0.2);
+      --accent: #124e47;
+      --accent-soft: rgba(18, 78, 71, 0.12);
+      --warm: #9f5a34;
+      --warm-soft: rgba(159, 90, 52, 0.12);
+      --deep: #21384b;
+      --shadow: 0 20px 60px rgba(20, 29, 34, 0.1);
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 999px;
+      --max-width: 1180px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Manrope", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 10%, rgba(159, 90, 52, 0.17), transparent 24%),
+        radial-gradient(circle at 88% 12%, rgba(18, 78, 71, 0.16), transparent 22%),
+        linear-gradient(180deg, #fbf6ee 0%, #f0e6d8 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(23, 33, 38, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 33, 38, 0.03) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 90%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    h1,
+    h2,
+    h3,
+    p,
+    ul,
+    li,
+    figure {
+      margin: 0;
+    }
+
+    ul {
+      padding: 0;
+      list-style: none;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+    }
+
+    .page-shell {
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 0 auto;
+      padding: 22px 0 48px;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 18px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 20px;
+      margin-bottom: 28px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      backdrop-filter: blur(14px);
+      transition:
+        background-color 200ms ease,
+        border-color 200ms ease,
+        box-shadow 200ms ease;
+    }
+
+    .site-header.is-scrolled {
+      background: rgba(255, 251, 245, 0.8);
+      border-color: rgba(23, 33, 38, 0.08);
+      box-shadow: 0 10px 28px rgba(20, 29, 34, 0.08);
+    }
+
+    .brand {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 18px;
+    }
+
+    .site-nav a,
+    .button {
+      transition:
+        color 180ms ease,
+        border-color 180ms ease,
+        background-color 180ms ease,
+        transform 180ms ease;
+    }
+
+    .site-nav a {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .site-nav a:hover,
+    .site-nav a:focus-visible {
+      color: var(--accent);
+    }
+
+    .section {
+      padding: 34px 0;
+    }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(18px);
+      transition:
+        opacity 520ms ease,
+        transform 520ms ease;
+    }
+
+    [data-reveal].is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .eyebrow {
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1,
+    h2 {
+      font-family: "Instrument Serif", Georgia, serif;
+      font-weight: 400;
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+    }
+
+    h1 {
+      font-size: clamp(3.2rem, 7vw, 5.7rem);
+      max-width: 11ch;
+    }
+
+    h2 {
+      font-size: clamp(2.2rem, 4.8vw, 3.8rem);
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      line-height: 1.3;
+    }
+
+    p,
+    li,
+    label,
+    .panel-note,
+    .section-note,
+    .small-note {
+      line-height: 1.7;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      gap: 22px;
+      align-items: stretch;
+      padding-top: 34px;
+    }
+
+    .hero-copy,
+    .hero-visual,
+    .summary-card,
+    .panel,
+    .control-card,
+    .chart-card,
+    .takeaway-card,
+    .footer-panel {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-copy,
+    .footer-panel,
+    .panel,
+    .control-card,
+    .chart-card,
+    .takeaway-card,
+    .summary-card {
+      padding: clamp(24px, 3vw, 34px);
+    }
+
+    .hero-copy::after,
+    .hero-visual::after,
+    .summary-card::after,
+    .panel::after,
+    .control-card::after,
+    .chart-card::after,
+    .takeaway-card::after,
+    .footer-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.28), transparent 34%),
+        linear-gradient(320deg, rgba(18, 78, 71, 0.04), transparent 24%);
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .hero-lead {
+      max-width: 40rem;
+      font-size: 1.16rem;
+      font-weight: 700;
+    }
+
+    .hero-summary,
+    .section-note,
+    .panel-note,
+    .small-note,
+    .metric-copy,
+    .control-help,
+    .chart-note,
+    .footer-panel p {
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+    }
+
+    .button-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), #0f665b);
+      box-shadow: 0 12px 22px rgba(18, 78, 71, 0.24);
+    }
+
+    .button-secondary {
+      border-color: var(--line-strong);
+      background: rgba(255, 255, 255, 0.42);
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translateY(-1px);
+    }
+
+    .hero-points {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .hero-points li {
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.48);
+      border: 1px solid rgba(23, 33, 38, 0.08);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .hero-visual {
+      padding: 24px;
+      background:
+        radial-gradient(circle at top left, rgba(18, 78, 71, 0.14), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(159, 90, 52, 0.16), transparent 30%),
+        rgba(255, 251, 245, 0.78);
+    }
+
+    .visual-shell {
+      display: grid;
+      gap: 14px;
+      height: 100%;
+    }
+
+    .mini-stage {
+      padding: 16px 18px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(23, 33, 38, 0.08);
+    }
+
+    .mini-label {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .mini-stage p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .mini-svg {
+      height: 90px;
+      margin-top: 12px;
+    }
+
+    .summary-grid,
+    .takeaways-grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .summary-card h3,
+    .takeaway-card h3 {
+      margin-bottom: 10px;
+    }
+
+    .summary-index,
+    .takeaway-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      margin-bottom: 14px;
+      border-radius: 50%;
+      font-weight: 800;
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .section-heading {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+      max-width: 50rem;
+    }
+
+    .mechanism-layout,
+    .beyond-layout {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .formula-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .equation-block,
+    .equation-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      width: fit-content;
+      padding: 14px 18px;
+      border: 1px solid rgba(23, 33, 38, 0.08);
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.48);
+      font-size: 1.02rem;
+    }
+
+    .equation-block strong,
+    .equation-inline strong {
+      font-size: 1.16rem;
+      color: var(--accent);
+    }
+
+    .story-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .story-list li {
+      padding: 12px 14px;
+      border-left: 3px solid var(--warm);
+      background: rgba(159, 90, 52, 0.08);
+      border-radius: 0 14px 14px 0;
+    }
+
+    .lab-layout {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .control-card {
+      position: sticky;
+      top: 104px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .control-intro {
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(23, 33, 38, 0.08);
+    }
+
+    .control-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .control-topline {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .control-value {
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .control-help {
+      font-size: 0.93rem;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(23, 33, 38, 0.08);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .pill.is-hot {
+      color: var(--warm);
+      background: rgba(159, 90, 52, 0.12);
+    }
+
+    .pill.is-cool {
+      color: var(--accent);
+      background: rgba(18, 78, 71, 0.12);
+    }
+
+    .lab-board {
+      display: grid;
+      gap: 18px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .metric-card {
+      padding: 20px 18px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(23, 33, 38, 0.08);
+    }
+
+    .metric-label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .metric-value {
+      font-size: clamp(1.55rem, 3vw, 2.2rem);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--deep);
+    }
+
+    .metric-copy {
+      display: block;
+      margin-top: 10px;
+      font-size: 0.92rem;
+    }
+
+    .chart-stack {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(0, 1.12fr) minmax(300px, 0.88fr);
+    }
+
+    .chart-card h3 {
+      margin-bottom: 6px;
+    }
+
+    .chart-note {
+      margin-top: 10px;
+      font-size: 0.94rem;
+    }
+
+    .chart-shell {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(23, 33, 38, 0.08);
+    }
+
+    .distribution-chart {
+      height: 330px;
+    }
+
+    .heatmap-wrap {
+      display: grid;
+      gap: 14px;
+    }
+
+    .heatmap-panel {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    .heatmap-ylabels,
+    .heatmap-xlabels {
+      display: grid;
+      gap: 4px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .heatmap-ylabels {
+      align-self: stretch;
+    }
+
+    .heatmap-grid {
+      display: grid;
+      gap: 4px;
+      aspect-ratio: 1 / 1;
+    }
+
+    .heat-cell {
+      min-width: 0;
+      border-radius: 8px;
+      border: 1px solid rgba(23, 33, 38, 0.06);
+      background: rgba(159, 90, 52, 0.1);
+    }
+
+    .heat-cell.is-tie {
+      box-shadow: inset 0 0 0 1px rgba(18, 78, 71, 0.26);
+    }
+
+    .heatmap-caption {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .band-chart {
+      height: 220px;
+    }
+
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .legend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .beyond-layout .panel:first-child {
+      display: grid;
+      gap: 18px;
+    }
+
+    .compact-controls {
+      display: grid;
+      gap: 12px;
+    }
+
+    .tie-tilt-chart {
+      height: 230px;
+    }
+
+    .insight-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .insight-list li {
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.48);
+      border: 1px solid rgba(23, 33, 38, 0.08);
+    }
+
+    .takeaways-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .footer-panel {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .footer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .screenreader-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 1080px) {
+      .hero,
+      .lab-layout,
+      .chart-stack,
+      .mechanism-layout,
+      .beyond-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .control-card {
+        position: static;
+      }
+
+      .hero-points,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page-shell {
+        width: min(calc(100% - 24px), var(--max-width));
+        padding-top: 16px;
+      }
+
+      .site-header,
+      .footer-panel {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .site-nav {
+        justify-content: flex-start;
+      }
+
+      .metrics-grid,
+      .takeaways-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .heatmap-panel {
+        grid-template-columns: 38px minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="index.html">Yihu Hou</a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#mechanism">Mechanism</a>
+        <a href="#lab">Live Lab</a>
+        <a href="#beyond">Beyond Benchmark</a>
+        <a href="#takeaways">Takeaways</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero section" data-reveal>
+        <div class="hero-copy">
+          <div>
+            <p class="eyebrow">Interactive paper explainer</p>
+            <h1>Coordination on a Grid</h1>
+            <p class="hero-lead">
+              Coarse categories do more than hide precision. They create exact posterior ties,
+              and ties make multiple cutoff equilibria easier to sustain.
+            </p>
+            <p class="hero-summary">
+              This page translates the paper's core logic into a small visual lab. The key move
+              is to separate reporting resolution from measurement accuracy: they affect
+              coordination through different channels.
+            </p>
+          </div>
+
+          <div class="hero-actions">
+            <a class="button button-primary" href="#lab">Open the Lab</a>
+            <a class="button button-secondary" href="coordination-on-a-grid_v3.pdf" target="_blank" rel="noreferrer">Read the PDF</a>
+          </div>
+
+          <ul class="hero-points">
+            <li>
+              <strong>Exact ties matter.</strong><br>
+              On a grid, two independent reports can match exactly with positive probability.
+            </li>
+            <li>
+              <strong>Multiplicity becomes measurable.</strong><br>
+              In the benchmark, the equilibrium-set width is <code>&Delta; + b&kappa;</code>.
+            </li>
+            <li>
+              <strong>Resolution is its own policy lever.</strong><br>
+              Finer reporting reduces tie risk even when accuracy stays fixed.
+            </li>
+          </ul>
+        </div>
+
+        <aside class="hero-visual" aria-label="Mechanism preview">
+          <div class="visual-shell">
+            <div class="mini-stage">
+              <span class="mini-label">1. Latent Measurement</span>
+              <p>A continuous noisy signal lives on a smooth bell curve.</p>
+              <svg class="mini-svg" viewBox="0 0 320 90" aria-hidden="true">
+                <defs>
+                  <linearGradient id="curveGlow" x1="0%" x2="100%">
+                    <stop offset="0%" stop-color="#9f5a34" stop-opacity="0.18"/>
+                    <stop offset="100%" stop-color="#124e47" stop-opacity="0.16"/>
+                  </linearGradient>
+                </defs>
+                <path d="M16 72 C56 72 82 18 160 18 C238 18 264 72 304 72" fill="none" stroke="#124e47" stroke-width="4" stroke-linecap="round"/>
+                <path d="M16 72 C56 72 82 18 160 18 C238 18 264 72 304 72 L304 84 L16 84 Z" fill="url(#curveGlow)"/>
+                <circle cx="105" cy="34" r="5" fill="#9f5a34"/>
+                <circle cx="152" cy="20" r="5" fill="#124e47"/>
+                <circle cx="213" cy="35" r="5" fill="#9f5a34"/>
+              </svg>
+            </div>
+
+            <div class="mini-stage">
+              <span class="mini-label">2. Reported Categories</span>
+              <p>The grid compresses many nearby realizations into the same report.</p>
+              <svg class="mini-svg" viewBox="0 0 320 90" aria-hidden="true">
+                <rect x="22" y="28" width="36" height="46" rx="12" fill="rgba(159, 90, 52, 0.18)"/>
+                <rect x="64" y="20" width="36" height="54" rx="12" fill="rgba(159, 90, 52, 0.18)"/>
+                <rect x="106" y="10" width="36" height="64" rx="12" fill="rgba(18, 78, 71, 0.28)"/>
+                <rect x="148" y="4" width="36" height="70" rx="12" fill="rgba(18, 78, 71, 0.35)"/>
+                <rect x="190" y="10" width="36" height="64" rx="12" fill="rgba(18, 78, 71, 0.28)"/>
+                <rect x="232" y="20" width="36" height="54" rx="12" fill="rgba(159, 90, 52, 0.18)"/>
+                <rect x="274" y="28" width="24" height="46" rx="12" fill="rgba(159, 90, 52, 0.18)"/>
+              </svg>
+            </div>
+
+            <div class="mini-stage">
+              <span class="mini-label">3. Self-Consistent Cutoffs</span>
+              <p>Ties add strategic slack, so the admissible cutoff region thickens.</p>
+              <svg class="mini-svg" viewBox="0 0 320 90" aria-hidden="true">
+                <line x1="20" y1="46" x2="300" y2="46" stroke="rgba(23, 33, 38, 0.3)" stroke-width="4" stroke-linecap="round"/>
+                <rect x="96" y="30" width="128" height="32" rx="16" fill="rgba(18, 78, 71, 0.16)"/>
+                <rect x="120" y="30" width="80" height="32" rx="16" fill="rgba(159, 90, 52, 0.28)"/>
+                <circle cx="160" cy="46" r="7" fill="#21384b"/>
+              </svg>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="section" data-reveal>
+        <div class="summary-grid">
+          <article class="summary-card">
+            <span class="summary-index">1</span>
+            <h3>The question</h3>
+            <p>
+              If measurement is already noisy, does a finer reporting language really matter for
+              coordination? The paper shows the answer is yes.
+            </p>
+          </article>
+
+          <article class="summary-card">
+            <span class="summary-index">2</span>
+            <h3>The mechanism</h3>
+            <p>
+              Coarse reporting clusters posterior mass onto a few categories. That raises the
+              probability of exact ties, and ties widen the set of self-consistent cutoffs.
+            </p>
+          </article>
+
+          <article class="summary-card">
+            <span class="summary-index">3</span>
+            <h3>The implication</h3>
+            <p>
+              Resolution and accuracy are distinct design margins. Accuracy changes learning, but
+              resolution directly targets selection risk created by discretization.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="mechanism" data-reveal>
+        <div class="section-heading">
+          <p class="eyebrow">Benchmark Logic</p>
+          <h2>The paper in one mechanism</h2>
+          <p class="section-note">
+            The additive benchmark isolates the source of multiplicity cleanly. It is not
+            continuous noise by itself. It is the way the reporting grid creates exact ties in
+            posterior-relevant signals.
+          </p>
+        </div>
+
+        <div class="mechanism-layout">
+          <article class="panel">
+            <h3>Why discretization changes the game</h3>
+            <ul class="story-list">
+              <li>Agents first observe a latent noisy measurement of the fundamental.</li>
+              <li>A reporting rule snaps that measurement onto a finite grid of categories.</li>
+              <li>Two independent agents can now land in the same category with positive probability.</li>
+              <li>Near the action boundary, those exact matches flatten the best-response comparison.</li>
+              <li>Flattened boundary incentives allow a whole block of nearby cutoff rules to be self-consistent.</li>
+            </ul>
+          </article>
+
+          <article class="panel formula-card">
+            <h3>Closed-form benchmark result</h3>
+            <p class="panel-note">
+              In the translation-invariant additive benchmark, all symmetric cutoff equilibria form
+              one interval. Its width depends on one tie statistic:
+            </p>
+            <div class="equation-inline">
+              <span>Tie probability</span>
+              <strong>&kappa; = &Sigma; p(u)<sup>2</sup></strong>
+            </div>
+            <div class="equation-block">
+              <span>Equilibrium width</span>
+              <strong>width(E) = &Delta; + b&kappa;</strong>
+            </div>
+            <p class="panel-note">
+              The orange <code>&Delta;</code> term is the mechanical one-grid slack. The teal
+              <code>b&kappa;</code> term is the extra strategic thickening created by ties.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="lab" data-reveal>
+        <div class="section-heading">
+          <p class="eyebrow">Live Lab</p>
+          <h2>Move resolution and accuracy separately</h2>
+          <p class="section-note">
+            This explainer uses a Gaussian latent measurement and rounds it to the nearest grid
+            point, so zero sits in the middle of a reporting category. That keeps the benchmark
+            phase centered and makes the tie mechanism easy to see.
+          </p>
+        </div>
+
+        <div class="lab-layout">
+          <aside class="control-card">
+            <div class="control-intro">
+              <h3>Controls</h3>
+              <p class="control-help">
+                Hold one margin fixed and move the other. The page recomputes the discretized
+                report distribution, the tie probability <code>&kappa;</code>, and the benchmark
+                equilibrium width.
+              </p>
+            </div>
+
+            <div class="control-group">
+              <div class="control-topline">
+                <label for="deltaRange">Resolution <code>&Delta;</code></label>
+                <span class="control-value" id="deltaValue">0.80</span>
+              </div>
+              <input id="deltaRange" type="range" min="0.25" max="1.60" step="0.01" value="0.80">
+              <p class="control-help">
+                Larger <code>&Delta;</code> means a coarser reporting grid with wider categories.
+              </p>
+            </div>
+
+            <div class="control-group">
+              <div class="control-topline">
+                <label for="sigmaRange">Accuracy scale <code>&sigma;</code></label>
+                <span class="control-value" id="sigmaValue">0.70</span>
+              </div>
+              <input id="sigmaRange" type="range" min="0.12" max="1.40" step="0.01" value="0.70">
+              <p class="control-help">
+                Smaller <code>&sigma;</code> means more accurate latent measurement.
+              </p>
+            </div>
+
+            <div class="control-group">
+              <div class="control-topline">
+                <label for="bRange">Strategic complementarity <code>b</code></label>
+                <span class="control-value" id="bValue">1.20</span>
+              </div>
+              <input id="bRange" type="range" min="0.30" max="2.40" step="0.01" value="1.20">
+              <p class="control-help">
+                Larger <code>b</code> makes tie-induced thickening more consequential.
+              </p>
+            </div>
+
+            <div class="pill-row">
+              <span class="pill is-cool" id="regimePill">Intermediate regime</span>
+              <span class="pill" id="riskPill">Selection risk: medium</span>
+            </div>
+
+            <p class="control-help" id="regimeCopy" aria-live="polite">
+              The grid is neither very fine nor very coarse relative to noise, so both margins are
+              visible in the benchmark.
+            </p>
+          </aside>
+
+          <div class="lab-board">
+            <div class="metrics-grid">
+              <article class="metric-card">
+                <span class="metric-label">Tie Probability</span>
+                <span class="metric-value" id="metricKappa">0.000</span>
+                <span class="metric-copy">Probability that two independent reports match exactly.</span>
+              </article>
+
+              <article class="metric-card">
+                <span class="metric-label">Benchmark Width</span>
+                <span class="metric-value" id="metricWidth">0.000</span>
+                <span class="metric-copy">The width of the symmetric-cutoff equilibrium interval.</span>
+              </article>
+
+              <article class="metric-card">
+                <span class="metric-label">Relative Scale</span>
+                <span class="metric-value" id="metricRatio">0.000</span>
+                <span class="metric-copy">The key comparison is <code>&Delta;/&sigma;</code>, not noise alone.</span>
+              </article>
+
+              <article class="metric-card">
+                <span class="metric-label">Tie Thickening</span>
+                <span class="metric-value" id="metricExtra">0.000</span>
+                <span class="metric-copy">The extra part of width generated by <code>b&kappa;</code>.</span>
+              </article>
+            </div>
+
+            <div class="chart-stack">
+              <article class="chart-card">
+                <h3>Continuous measurement, discrete reports</h3>
+                <p class="panel-note">
+                  The bell curve is the latent measurement error. The bars show what remains after
+                  reporting compresses it into categories.
+                </p>
+                <div class="chart-shell">
+                  <svg class="distribution-chart" id="distributionChart" viewBox="0 0 760 330" aria-labelledby="distributionTitle"></svg>
+                  <span class="screenreader-only" id="distributionTitle">Distribution chart showing latent density and discretized report probabilities.</span>
+                </div>
+                <p class="chart-note" id="distributionNote">
+                  Coarser reporting puts more probability mass into each category and raises the
+                  chance that two agents receive the same report.
+                </p>
+              </article>
+
+              <article class="chart-card">
+                <h3>Joint report pairs</h3>
+                <p class="panel-note">
+                  Each cell is one pair of reported categories. The highlighted diagonal is where
+                  the two reports are exactly tied.
+                </p>
+                <div class="chart-shell heatmap-wrap">
+                  <div class="heatmap-panel">
+                    <div class="heatmap-ylabels" id="heatmapYLabels" aria-hidden="true"></div>
+                    <div class="heatmap-grid" id="heatmapGrid" aria-label="Heatmap of pairwise report probabilities"></div>
+                  </div>
+                  <div class="heatmap-xlabels" id="heatmapXLabels" aria-hidden="true"></div>
+                  <div class="heatmap-caption">
+                    <span>Diagonal cells sum to <strong id="heatmapTieValue">0.000</strong>.</span>
+                    <span id="heatmapCaption">More mass on the diagonal means more exact ties.</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <article class="chart-card">
+              <h3>How ties widen the equilibrium set</h3>
+              <p class="panel-note">
+                The orange segment is the one-grid slack <code>&Delta;</code>. The teal wings are
+                the extra self-consistent region created by <code>b&kappa;</code>.
+              </p>
+              <div class="chart-shell">
+                <svg class="band-chart" id="bandChart" viewBox="0 0 760 220" aria-labelledby="bandTitle"></svg>
+                <span class="screenreader-only" id="bandTitle">Band chart decomposing the equilibrium-set width into grid slack and tie thickening.</span>
+                <div class="legend-row">
+                  <span class="legend-chip"><span class="legend-dot" style="background: rgba(159, 90, 52, 0.45)"></span>Mechanical grid term <code>&Delta;</code></span>
+                  <span class="legend-chip"><span class="legend-dot" style="background: rgba(18, 78, 71, 0.42)"></span>Tie thickening <code>b&kappa;</code></span>
+                </div>
+              </div>
+              <p class="chart-note" id="bandNote">
+                The benchmark center depends on payoffs, but the width does not. This page focuses
+                on the paper's width mechanism.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="beyond" data-reveal>
+        <div class="section-heading">
+          <p class="eyebrow">Beyond The Benchmark</p>
+          <h2>Tie widens, tilt shifts</h2>
+          <p class="section-note">
+            The paper also studies more general environments without translation invariance. The
+            local message survives in a tie-tilt decomposition: ties thicken the admissible region,
+            while directional asymmetry mainly moves where that region sits.
+          </p>
+        </div>
+
+        <div class="beyond-layout">
+          <article class="panel">
+            <div class="compact-controls">
+              <div class="control-group">
+                <div class="control-topline">
+                  <label for="tieRange">Local tie mass <code>&kappa;(s)</code></label>
+                  <span class="control-value" id="tieValue">0.40</span>
+                </div>
+                <input id="tieRange" type="range" min="0.00" max="1.00" step="0.01" value="0.40">
+              </div>
+
+              <div class="control-group">
+                <div class="control-topline">
+                  <label for="tiltRange">Directional tilt <code>&delta;(s)</code></label>
+                  <span class="control-value" id="tiltValue">0.00</span>
+                </div>
+                <input id="tiltRange" type="range" min="-1.00" max="1.00" step="0.01" value="0.00">
+              </div>
+            </div>
+
+            <div class="chart-shell">
+              <svg class="tie-tilt-chart" id="tieTiltChart" viewBox="0 0 760 230" aria-labelledby="tieTiltTitle"></svg>
+              <span class="screenreader-only" id="tieTiltTitle">Interactive chart showing how ties widen and tilt shifts the admissible cutoff region.</span>
+            </div>
+            <p class="chart-note" id="tieTiltNote">
+              Ties widen the admissible region. Tilt moves the whole region left or right.
+            </p>
+          </article>
+
+          <article class="panel">
+            <h3>What remains true outside the benchmark</h3>
+            <ul class="insight-list">
+              <li><strong>No exact ties, no connected interval multiplicity.</strong> Without ties, adjacent cutoff values cannot both be sustained.</li>
+              <li><strong>Ties are the local thickening force.</strong> They create slack between adjacent boundary conditions.</li>
+              <li><strong>Tilt is a location and branching force.</strong> It comes from directional asymmetry in boundary beliefs and can move or split the equilibrium set.</li>
+              <li><strong>Local flatness recovers the benchmark logic.</strong> When the prior is locally diffuse on the relevant scale, tilt becomes small and ties dominate again.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="takeaways" data-reveal>
+        <div class="section-heading">
+          <p class="eyebrow">Why It Matters</p>
+          <h2>Four short policy takeaways</h2>
+          <p class="section-note">
+            The paper is not only about equilibrium theory. It also shows how reporting design can
+            be used as a practical instrument once equilibrium selection matters.
+          </p>
+        </div>
+
+        <div class="takeaways-grid">
+          <article class="takeaway-card">
+            <span class="takeaway-index">1</span>
+            <h3>Refining reports targets selection risk directly</h3>
+            <p>
+              Holding a cutoff fixed, resolution changes the reporting language rather than the
+              latent measurement. It therefore acts directly on the tie channel.
+            </p>
+          </article>
+
+          <article class="takeaway-card">
+            <span class="takeaway-index">2</span>
+            <h3>Accuracy upgrades can cut both ways</h3>
+            <p>
+              Better measurement improves learning, but on a fixed coarse grid it can also pile
+              probability mass into a few categories and raise tie incidence.
+            </p>
+          </article>
+
+          <article class="takeaway-card">
+            <span class="takeaway-index">3</span>
+            <h3>The key comparison is the scale ratio</h3>
+            <p>
+              Near complete information is a joint limit. What matters is whether reporting
+              refinement outpaces accuracy, not whether noise becomes small in isolation.
+            </p>
+          </article>
+
+          <article class="takeaway-card">
+            <span class="takeaway-index">4</span>
+            <h3>The selection margin is empirically measurable</h3>
+            <p>
+              The paper links tie sensitivity to paired measurement differences, so duplicate
+              audits, repeated readings, or matched units can reveal how fragile selection is.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-panel">
+      <p>
+        Based on the paper <em>Coordination on a Grid: Posterior Ties, Multiplicity, and Information Structure</em>.
+        This page is a visual explainer of the main mechanism rather than a substitute for the full proofs.
+      </p>
+      <div class="footer-actions">
+        <a class="button button-secondary" href="coordination-on-a-grid_v3.pdf" target="_blank" rel="noreferrer">Open paper</a>
+        <a class="button button-secondary" href="index.html#research">Back to homepage</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const header = document.querySelector(".site-header");
+    const revealItems = document.querySelectorAll("[data-reveal]");
+
+    const deltaRange = document.querySelector("#deltaRange");
+    const sigmaRange = document.querySelector("#sigmaRange");
+    const bRange = document.querySelector("#bRange");
+    const tieRange = document.querySelector("#tieRange");
+    const tiltRange = document.querySelector("#tiltRange");
+
+    const deltaValue = document.querySelector("#deltaValue");
+    const sigmaValue = document.querySelector("#sigmaValue");
+    const bValue = document.querySelector("#bValue");
+    const tieValue = document.querySelector("#tieValue");
+    const tiltValue = document.querySelector("#tiltValue");
+
+    const metricKappa = document.querySelector("#metricKappa");
+    const metricWidth = document.querySelector("#metricWidth");
+    const metricRatio = document.querySelector("#metricRatio");
+    const metricExtra = document.querySelector("#metricExtra");
+    const regimePill = document.querySelector("#regimePill");
+    const riskPill = document.querySelector("#riskPill");
+    const regimeCopy = document.querySelector("#regimeCopy");
+    const distributionNote = document.querySelector("#distributionNote");
+    const heatmapTieValue = document.querySelector("#heatmapTieValue");
+    const heatmapCaption = document.querySelector("#heatmapCaption");
+    const bandNote = document.querySelector("#bandNote");
+    const tieTiltNote = document.querySelector("#tieTiltNote");
+
+    const distributionChart = document.querySelector("#distributionChart");
+    const heatmapGrid = document.querySelector("#heatmapGrid");
+    const heatmapXLabels = document.querySelector("#heatmapXLabels");
+    const heatmapYLabels = document.querySelector("#heatmapYLabels");
+    const bandChart = document.querySelector("#bandChart");
+    const tieTiltChart = document.querySelector("#tieTiltChart");
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const formatNumber = (value, digits = 2) => Number(value).toFixed(digits);
+
+    const erf = (x) => {
+      const sign = x < 0 ? -1 : 1;
+      const absX = Math.abs(x);
+      const a1 = 0.254829592;
+      const a2 = -0.284496736;
+      const a3 = 1.421413741;
+      const a4 = -1.453152027;
+      const a5 = 1.061405429;
+      const p = 0.3275911;
+      const t = 1 / (1 + p * absX);
+      const y = 1 - (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-absX * absX));
+      return sign * y;
+    };
+
+    const normalCdf = (x) => 0.5 * (1 + erf(x / Math.SQRT2));
+
+    const normalPdf = (x, sigma) => {
+      const z = x / sigma;
+      return Math.exp(-0.5 * z * z) / (sigma * Math.sqrt(2 * Math.PI));
+    };
+
+    const categoryLabel = (k) => {
+      if (k === 0) {
+        return "0";
+      }
+
+      if (k === 1) {
+        return "+1&Delta;";
+      }
+
+      if (k === -1) {
+        return "-1&Delta;";
+      }
+
+      return `${k > 0 ? "+" : ""}${k}&Delta;`;
+    };
+
+    const buildModel = (delta, sigma, b) => {
+      const span = Math.max(3.6 * sigma, 2.8 * delta, 2.8);
+      const kMin = Math.floor(-span / delta) - 3;
+      const kMax = Math.ceil(span / delta) + 3;
+      const bins = [];
+      let total = 0;
+
+      for (let k = kMin; k <= kMax; k += 1) {
+        const left = (k - 0.5) * delta;
+        const right = (k + 0.5) * delta;
+        const probability = normalCdf(right / sigma) - normalCdf(left / sigma);
+        bins.push({
+          k,
+          left,
+          right,
+          center: k * delta,
+          probability
+        });
+        total += probability;
+      }
+
+      const normalizedBins = bins.map((bin) => ({
+        ...bin,
+        probability: total > 0 ? bin.probability / total : 0
+      }));
+
+      const kappa = normalizedBins.reduce((sum, bin) => sum + bin.probability * bin.probability, 0);
+      const extra = b * kappa;
+      const width = delta + extra;
+      const ratio = delta / sigma;
+
+      return {
+        bins: normalizedBins,
+        delta,
+        sigma,
+        b,
+        kappa,
+        extra,
+        width,
+        ratio,
+        span
+      };
+    };
+
+    const renderDistribution = (state) => {
+      const width = 760;
+      const height = 330;
+      const margin = { top: 16, right: 16, bottom: 46, left: 30 };
+      const innerWidth = width - margin.left - margin.right;
+      const innerHeight = height - margin.top - margin.bottom;
+      const xMin = -state.span;
+      const xMax = state.span;
+      const xScale = (value) => margin.left + ((value - xMin) / (xMax - xMin)) * innerWidth;
+      const yScale = (value, max) => margin.top + innerHeight - (value / max) * (innerHeight - 24);
+      const maxProbability = Math.max(...state.bins.map((bin) => bin.probability), 0.001);
+      const maxPdf = normalPdf(0, state.sigma);
+
+      const sampleCount = 120;
+      const pathParts = [];
+      for (let index = 0; index <= sampleCount; index += 1) {
+        const xValue = xMin + (index / sampleCount) * (xMax - xMin);
+        const yValue = yScale(normalPdf(xValue, state.sigma), maxPdf);
+        pathParts.push(`${index === 0 ? "M" : "L"} ${xScale(xValue).toFixed(2)} ${yValue.toFixed(2)}`);
+      }
+      const curvePath = pathParts.join(" ");
+      const fillPath = `${curvePath} L ${xScale(xMax).toFixed(2)} ${(margin.top + innerHeight).toFixed(2)} L ${xScale(xMin).toFixed(2)} ${(margin.top + innerHeight).toFixed(2)} Z`;
+
+      const visibleBins = state.bins.filter((bin) => bin.right >= xMin && bin.left <= xMax);
+      const boundaryLines = visibleBins
+        .map((bin) => {
+          const x = xScale(bin.left).toFixed(2);
+          return `<line x1="${x}" y1="${margin.top}" x2="${x}" y2="${margin.top + innerHeight}" stroke="rgba(23, 33, 38, 0.08)" stroke-width="1"/>`;
+        })
+        .join("");
+
+      const bars = visibleBins
+        .map((bin) => {
+          const x = xScale(bin.left);
+          const barWidth = Math.max(1, xScale(bin.right) - xScale(bin.left) - 3);
+          const barHeight = ((bin.probability / maxProbability) * (innerHeight * 0.62));
+          const y = margin.top + innerHeight - barHeight;
+          return `
+            <rect
+              x="${x.toFixed(2)}"
+              y="${y.toFixed(2)}"
+              width="${barWidth.toFixed(2)}"
+              height="${barHeight.toFixed(2)}"
+              rx="10"
+              fill="rgba(18, 78, 71, 0.28)"
+              stroke="rgba(18, 78, 71, 0.18)"
+              stroke-width="1"
+            />
+          `;
+        })
+        .join("");
+
+      const axisY = margin.top + innerHeight;
+      distributionChart.innerHTML = `
+        <rect x="0" y="0" width="${width}" height="${height}" rx="26" fill="transparent"/>
+        ${boundaryLines}
+        <path d="${fillPath}" fill="rgba(159, 90, 52, 0.12)"></path>
+        <path d="${curvePath}" fill="none" stroke="#9f5a34" stroke-width="3.2" stroke-linecap="round"></path>
+        ${bars}
+        <line x1="${margin.left}" y1="${axisY}" x2="${width - margin.right}" y2="${axisY}" stroke="rgba(23, 33, 38, 0.22)" stroke-width="2"/>
+        <line x1="${xScale(0)}" y1="${margin.top}" x2="${xScale(0)}" y2="${axisY}" stroke="rgba(18, 78, 71, 0.22)" stroke-width="2" stroke-dasharray="6 6"/>
+        <text x="${margin.left}" y="${height - 16}" fill="#5d6872" font-size="12">latent error scale</text>
+        <text x="${(width - margin.right - 4)}" y="${height - 16}" text-anchor="end" fill="#5d6872" font-size="12">reported categories overlay</text>
+      `;
+    };
+
+    const renderHeatmap = (state) => {
+      const limit = state.ratio < 0.8 ? 4 : 3;
+      const binsByK = new Map(state.bins.map((bin) => [bin.k, bin]));
+      const displayBins = [];
+      for (let k = -limit; k <= limit; k += 1) {
+        displayBins.push(binsByK.get(k) || { k, probability: 0 });
+      }
+
+      const size = displayBins.length;
+      const maxCell = Math.max(...displayBins.flatMap((rowBin) => displayBins.map((colBin) => rowBin.probability * colBin.probability)), 0.0001);
+      heatmapGrid.style.gridTemplateColumns = `repeat(${size}, minmax(0, 1fr))`;
+      heatmapGrid.innerHTML = displayBins
+        .flatMap((rowBin) => displayBins.map((colBin) => {
+          const value = rowBin.probability * colBin.probability;
+          const intensity = clamp(Math.pow(value / maxCell, 0.62), 0, 1);
+          const isTie = rowBin.k === colBin.k;
+          const alpha = 0.12 + 0.78 * intensity;
+          const background = isTie
+            ? `rgba(18, 78, 71, ${alpha.toFixed(3)})`
+            : `rgba(159, 90, 52, ${(alpha * 0.92).toFixed(3)})`;
+          return `
+            <div
+              class="heat-cell ${isTie ? "is-tie" : ""}"
+              style="background: ${background};"
+              title="Pr(report1=${rowBin.k}, report2=${colBin.k}) = ${formatNumber(value, 3)}"
+            ></div>
+          `;
+        }))
+        .join("");
+
+      heatmapXLabels.style.gridTemplateColumns = `repeat(${size}, minmax(0, 1fr))`;
+      heatmapXLabels.innerHTML = displayBins.map((bin) => `<span>${categoryLabel(bin.k)}</span>`).join("");
+      heatmapYLabels.style.gridTemplateRows = `repeat(${size}, minmax(0, 1fr))`;
+      heatmapYLabels.innerHTML = [...displayBins].reverse().map((bin) => `<span>${categoryLabel(bin.k)}</span>`).join("");
+
+      heatmapTieValue.textContent = formatNumber(state.kappa, 3);
+      heatmapCaption.textContent = state.kappa < 0.18
+        ? "Tie mass is sparse: most joint probability sits off the diagonal."
+        : state.kappa < 0.38
+          ? "Ties are visible: diagonal cells now carry a meaningful share of the joint mass."
+          : "Ties dominate: many paired reports collapse onto the same categories.";
+    };
+
+    const renderBand = (state) => {
+      const width = 760;
+      const height = 220;
+      const margin = { top: 20, right: 30, bottom: 44, left: 30 };
+      const innerWidth = width - margin.left - margin.right;
+      const domain = 2.4;
+      const xScale = (value) => margin.left + ((value + domain) / (domain * 2)) * innerWidth;
+      const axisY = 146;
+      const totalHalfWidth = state.width / 2;
+      const gridHalfWidth = state.delta / 2;
+
+      const totalLeft = xScale(-totalHalfWidth);
+      const totalRight = xScale(totalHalfWidth);
+      const gridLeft = xScale(-gridHalfWidth);
+      const gridRight = xScale(gridHalfWidth);
+
+      bandChart.innerHTML = `
+        <line x1="${margin.left}" y1="${axisY}" x2="${width - margin.right}" y2="${axisY}" stroke="rgba(23, 33, 38, 0.24)" stroke-width="4" stroke-linecap="round"/>
+        <rect x="${totalLeft.toFixed(2)}" y="${axisY - 28}" width="${(totalRight - totalLeft).toFixed(2)}" height="56" rx="28" fill="rgba(18, 78, 71, 0.14)"/>
+        <rect x="${gridLeft.toFixed(2)}" y="${axisY - 28}" width="${(gridRight - gridLeft).toFixed(2)}" height="56" rx="28" fill="rgba(159, 90, 52, 0.28)"/>
+        <line x1="${xScale(0)}" y1="${axisY - 58}" x2="${xScale(0)}" y2="${axisY + 58}" stroke="rgba(33, 56, 75, 0.2)" stroke-width="2" stroke-dasharray="6 6"/>
+        <text x="${xScale(0)}" y="34" text-anchor="middle" fill="#21384b" font-size="14" font-weight="700">benchmark center</text>
+        <text x="${totalLeft}" y="${axisY - 38}" fill="#124e47" font-size="12">- width(E)/2</text>
+        <text x="${totalRight}" y="${axisY - 38}" text-anchor="end" fill="#124e47" font-size="12">+ width(E)/2</text>
+        <text x="${gridLeft}" y="${axisY + 74}" fill="#9f5a34" font-size="12">-&Delta;/2</text>
+        <text x="${gridRight}" y="${axisY + 74}" text-anchor="end" fill="#9f5a34" font-size="12">+&Delta;/2</text>
+        <text x="${margin.left}" y="${height - 16}" fill="#5d6872" font-size="12">orange: one-grid slack</text>
+        <text x="${width - margin.right}" y="${height - 16}" text-anchor="end" fill="#5d6872" font-size="12">teal: extra thickening from exact ties</text>
+      `;
+
+      bandNote.textContent = state.extra < 0.18
+        ? "Most of the width is mechanical. Ties add only a small extra layer of strategic slack."
+        : state.extra < 0.45
+          ? "Both pieces matter now: the grid creates baseline slack, and ties add a visible thickening margin."
+          : "Tie-induced thickening is doing serious work here. A large part of multiplicity is coming from exact matches.";
+    };
+
+    const renderTieTilt = () => {
+      const tie = Number(tieRange.value);
+      const tilt = Number(tiltRange.value);
+      const width = 760;
+      const height = 230;
+      const margin = { top: 30, right: 32, bottom: 40, left: 32 };
+      const innerWidth = width - margin.left - margin.right;
+      const domain = 2.6;
+      const xScale = (value) => margin.left + ((value + domain) / (domain * 2)) * innerWidth;
+
+      const baseWidth = 1.02;
+      const activeWidth = baseWidth + tie * 1.55;
+      const baseCenter = 0;
+      const activeCenter = tilt * 0.86;
+
+      const baseLeft = xScale(baseCenter - baseWidth / 2);
+      const baseRight = xScale(baseCenter + baseWidth / 2);
+      const activeLeft = xScale(activeCenter - activeWidth / 2);
+      const activeRight = xScale(activeCenter + activeWidth / 2);
+      const baseY = 156;
+      const activeY = 96;
+      const shiftText = tilt > 0.08 ? "right" : tilt < -0.08 ? "left" : "almost not at all";
+
+      tieTiltChart.innerHTML = `
+        <line x1="${margin.left}" y1="${baseY}" x2="${width - margin.right}" y2="${baseY}" stroke="rgba(23, 33, 38, 0.22)" stroke-width="4" stroke-linecap="round"/>
+        <rect x="${baseLeft.toFixed(2)}" y="${baseY - 20}" width="${(baseRight - baseLeft).toFixed(2)}" height="40" rx="20" fill="rgba(23, 33, 38, 0.14)"/>
+        <rect x="${activeLeft.toFixed(2)}" y="${activeY - 24}" width="${(activeRight - activeLeft).toFixed(2)}" height="48" rx="24" fill="rgba(18, 78, 71, 0.18)"/>
+        <rect x="${xScale(activeCenter - baseWidth / 2).toFixed(2)}" y="${activeY - 24}" width="${(xScale(activeCenter + baseWidth / 2) - xScale(activeCenter - baseWidth / 2)).toFixed(2)}" height="48" rx="24" fill="rgba(159, 90, 52, 0.26)"/>
+        <line x1="${xScale(0)}" y1="${activeY - 56}" x2="${xScale(0)}" y2="${baseY + 38}" stroke="rgba(33, 56, 75, 0.18)" stroke-width="2" stroke-dasharray="6 6"/>
+        <text x="${margin.left}" y="34" fill="#5d6872" font-size="12">baseline admissible region</text>
+        <text x="${margin.left}" y="58" fill="#124e47" font-size="12">updated region after changing local ties and tilt</text>
+        <text x="${activeLeft}" y="${activeY - 34}" fill="#124e47" font-size="12">left boundary</text>
+        <text x="${activeRight}" y="${activeY - 34}" text-anchor="end" fill="#124e47" font-size="12">right boundary</text>
+      `;
+
+      tieTiltNote.textContent = tie < 0.1
+        ? "With almost no local ties, connected thickening nearly disappears. Tilt can still move the region, but it does not widen much."
+        : `Higher local ties widen the region, while the current tilt moves it ${shiftText}.`;
+    };
+
+    const updateLab = () => {
+      const delta = Number(deltaRange.value);
+      const sigma = Number(sigmaRange.value);
+      const b = Number(bRange.value);
+      const state = buildModel(delta, sigma, b);
+
+      deltaValue.textContent = formatNumber(delta);
+      sigmaValue.textContent = formatNumber(sigma);
+      bValue.textContent = formatNumber(b);
+
+      metricKappa.textContent = formatNumber(state.kappa, 3);
+      metricWidth.textContent = formatNumber(state.width, 3);
+      metricRatio.textContent = formatNumber(state.ratio, 2);
+      metricExtra.textContent = formatNumber(state.extra, 3);
+
+      if (state.ratio < 0.8) {
+        regimePill.textContent = "Fine grid relative to noise";
+        regimePill.className = "pill is-cool";
+        regimeCopy.textContent = "Reporting is relatively fine. Probability mass spreads across many categories, so exact ties are comparatively scarce.";
+      } else if (state.ratio < 1.7) {
+        regimePill.textContent = "Intermediate regime";
+        regimePill.className = "pill is-cool";
+        regimeCopy.textContent = "Resolution and accuracy are balanced enough that both channels are visible. Small changes in either margin can move tie risk.";
+      } else {
+        regimePill.textContent = "Coarse grid relative to noise";
+        regimePill.className = "pill is-hot";
+        regimeCopy.textContent = "Reporting is coarse relative to measurement accuracy. Many latent realizations collapse into the same category, so exact ties become common.";
+      }
+
+      if (state.kappa < 0.18) {
+        riskPill.textContent = "Selection risk: low";
+        riskPill.className = "pill";
+      } else if (state.kappa < 0.38) {
+        riskPill.textContent = "Selection risk: medium";
+        riskPill.className = "pill";
+      } else {
+        riskPill.textContent = "Selection risk: high";
+        riskPill.className = "pill is-hot";
+      }
+
+      distributionNote.textContent = state.sigma < 0.45 && state.delta > 0.9
+        ? "Accuracy is high but reporting is coarse, so the latent bell curve gets squeezed into only a few categories."
+        : state.delta < 0.45
+          ? "The grid is fine enough to spread mass over many categories, which lowers the collision probability."
+          : "Resolution and accuracy are both visible in the report distribution, so tie risk sits between the two extremes.";
+
+      renderDistribution(state);
+      renderHeatmap(state);
+      renderBand(state);
+    };
+
+    const syncHeader = () => {
+      header.classList.toggle("is-scrolled", window.scrollY > 18);
+    };
+
+    syncHeader();
+    window.addEventListener("scroll", syncHeader, { passive: true });
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) {
+              return;
+            }
+
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          });
+        },
+        {
+          threshold: 0.18,
+          rootMargin: "0px 0px -32px 0px"
+        }
+      );
+
+      revealItems.forEach((item) => observer.observe(item));
+    } else {
+      revealItems.forEach((item) => item.classList.add("is-visible"));
+    }
+
+    [deltaRange, sigmaRange, bRange].forEach((input) => input.addEventListener("input", updateLab));
+    [tieRange, tiltRange].forEach((input) => input.addEventListener("input", () => {
+      tieValue.textContent = formatNumber(tieRange.value);
+      tiltValue.textContent = formatNumber(tiltRange.value);
+      renderTieTilt();
+    }));
+
+    updateLab();
+    tieValue.textContent = formatNumber(tieRange.value);
+    tiltValue.textContent = formatNumber(tiltRange.value);
+    renderTieTilt();
+  </script>
+</body>
+</html>
