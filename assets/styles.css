@@ -505,6 +505,20 @@ dd,
   gap: 8px;
 }
 
+.materials-heading {
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 18px;
+}
+
+.materials-heading .section-note {
+  margin-top: 10px;
+}
+
+.materials-heading .button {
+  margin-bottom: 4px;
+}
+
 .material-row {
   display: flex;
   align-items: center;
@@ -682,6 +696,15 @@ dd,
     align-items: flex-start;
     flex-direction: column;
     gap: 12px;
+  }
+
+  .materials-heading {
+    grid-template-columns: 1fr;
+  }
+
+  .materials-heading .button {
+    width: fit-content;
+    margin-bottom: 0;
   }
 
   .hero-photo img {
