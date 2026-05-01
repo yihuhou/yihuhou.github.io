@@ -343,6 +343,21 @@ dd,
   border-color: var(--accent);
 }
 
+.button-download-all {
+  min-height: 44px;
+  padding: 0 18px;
+  color: var(--accent);
+  border: 1px solid rgba(18, 78, 71, 0.28);
+  background: rgba(18, 78, 71, 0.08);
+}
+
+.button-download-all:hover,
+.button-download-all:focus-visible {
+  color: #fffdf8;
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
 .hero-meta {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -516,7 +531,11 @@ dd,
 }
 
 .materials-heading .button {
+  width: auto;
+  justify-self: end;
+  margin-right: 16px;
   margin-bottom: 4px;
+  white-space: nowrap;
 }
 
 .material-row {
@@ -703,7 +722,9 @@ dd,
   }
 
   .materials-heading .button {
-    width: fit-content;
+    width: auto;
+    justify-self: start;
+    margin-right: 0;
     margin-bottom: 0;
   }
 
